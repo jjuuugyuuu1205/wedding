@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wedding Invitation</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Aubrey&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+
+/* 서체 */
+.eng{
+font-family:'Aubrey', cursive;
+}
+
+body{
+margin:0;
+background:#faf4ee;
+text-align:center;
+color:#5c4a3f;
+font-family:'Noto Serif KR', serif;
+}
+
+/* 영화 오프닝 */
+#openingTitle{
+font-size:40px;
+opacity:0;
+transform:scale(0.8);
+transition:2s cubic-bezier(.22,1,.36,1);
+}
+
+#openingTitle.show{
+opacity:1;
+transform:scale(1);
+}
+
+/* 섹션 */
+.section{
+padding:50px 20px;
+}
+
+/* 카드 */
+.card{
+max-width:420px;
+margin:auto;
+background:#fffaf6;
+padding:30px;
+border-radius:28px;
+box-shadow:0 10px 40px rgba(0,0,0,0.08);
+}
+
+/* 영상 */
+video{
+width:100%;
+max-width:420px;
+border-radius:28px;
+}
+
+/* 갤러리 */
+.gallery{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+max-width:380px;
+margin:auto;
+}
+
+.gallery img{
+width:100%;
+border-radius:16px;
+cursor:pointer;
+}
+
+/* 라이트박스 */
+.lightbox{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.9);
+justify-content:center;
+align-items:center;
+z-index:30;
+}
+
+.lightbox img{
+max-width:95%;
+border-radius:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ⭐ 오프닝 -->
+<div id="intro" class="section">
+
+<div id="openingTitle" class="eng">
+Two Hearts, One Beginning
+</div>
+
+<p>Tap to Enter 💌</p>
+
+</div>
+
+<div id="mainContent" style="display:none">
+
+<!-- 영상 -->
+<div class="section">
+
+<div class="eng" style="font-size:34px;margin-bottom:20px">
+Two Hearts, One Beginning
+</div>
+
+<video id="mainVideo" autoplay muted loop playsinline>
+<source src="wedding.mp4">
+</video>
+
+</div>
+
+<!-- 결혼식 안내 -->
+<div class="section card">
+
+<h3>결혼식 안내</h3>
+
+2026년 12월 5일<br>
+오후 12시 30분<br>
+서울 ○○호텔 그랜드홀
+
+</div>
+
+<!-- 신랑신부 사진 -->
+<div class="section">
+
+<h3>신랑 & 신부</h3>
+
+<img src="images/groom.jpg" style="width:160px;border-radius:20px;margin:10px">
+<img src="images/bride.jpg" style="width:160px;border-radius:20px;margin:10px">
+
+</div>
+
+<!-- 결혼식 정보 -->
+<div class="section card">
+
+<h3>결혼식 정보</h3>
+
+신랑 김규래<br>
+신부 강민주<br><br>
+
+국민은행<br>
+123-456-789012<br>
+
+<br>
+
+<button onclick="copyText('123-456-789012')">
+계좌복사
+</button>
+
+</div>
+
+<!-- ⭐ 갤러리 -->
+<div class="section">
+
+<h3>Photo Gallery</h3>
+
+<div class="gallery" id="gallery"></div>
+
+</div>
+
+</div>
+
+<!-- 라이트박스 -->
+<div class="lightbox" id="lightbox">
+<img id="lightImg">
+</div>
+
+<script>
+
+/* 오프닝 */
+window.onload=function(){
+
+setTimeout(()=>{
+document.getElementById("openingTitle").classList.add("show");
+},400);
+
+};
+
+document.getElementById("intro").onclick=function(){
+
+this.style.opacity="0";
+
+setTimeout(()=>{
+this.style.display="none";
+document.getElementById("mainContent").style.display="block";
+},800);
+
+};
+
+/* 영상 */
+document.getElementById("mainVideo").onclick=function(){
+if(this.requestFullscreen){
+this.requestFullscreen();
+}
+};
+
+/* 갤러리 */
+const images=[
+"images/photo1.jpg",
+"images/photo2.jpg",
+"images/photo3.jpg",
+"images/photo4.jpg"
+];
+
+const gallery=document.getElementById("gallery");
+
+let currentIndex=0;
+
+images.forEach((img,i)=>{
+let el=document.createElement("img");
+el.src=img;
+el.onclick=()=>openLight(i);
+gallery.appendChild(el);
+});
+
+function openLight(index){
+currentIndex=index;
+
+document.getElementById("lightbox").style.display="flex";
+document.getElementById("lightImg").src=images[currentIndex];
+}
+
+/* 슬라이드 이동 */
+document.getElementById("lightbox").onclick=function(e){
+
+if(e.clientX < window.innerWidth/2){
+currentIndex=(currentIndex-1+images.length)%images.length;
+}else{
+currentIndex=(currentIndex+1)%images.length;
+}
+
+document.getElementById("lightImg").src=images[currentIndex];
+
+};
+
+function copyText(text){
+navigator.clipboard.writeText(text);
+alert("복사되었습니다");
+}
+
+</script>
+
+</body>
+</html>
