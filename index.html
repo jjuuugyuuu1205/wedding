@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Wedding</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+:root{
+  --bg:#eaf6ff;
+  --primary:#0d2f57;
+  --button:#bcdfff;
+  --white:#ffffff;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:'Pretendard',sans-serif;
+  color:var(--primary);
+  text-align:center;
+  overflow-x:hidden;
+}
+
+/* 봉투 오프닝 */
+#envelopeWrap{
+  position:fixed;
+  inset:0;
+  background:#ffffff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:1000;
+  font-family:'Baloo 2',cursive;
+}
+
+.envelope{
+  width:220px;
+  height:140px;
+  background:#cfe9ff;
+  position:relative;
+  cursor:pointer;
+  border-radius:10px;
+}
+
+.flap{
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:#bcdfff;
+  clip-path:polygon(0 0,100% 0,50% 70%);
+  transform-origin:top;
+  transition:transform 1s ease;
+}
+
+.envelope.open .flap{
+  transform:rotateX(180deg);
+}
+
+.open-text{
+  margin-top:20px;
+  font-size:18px;
+}
+
+/* 기본 섹션 */
+.section{
+  padding:90px 20px;
+  opacity:0;
+  transform:translateY(40px);
+  transition:all 1s ease;
+}
+.section.show{
+  opacity:1;
+  transform:none;
+}
+
+.kitsch{
+  font-family:'Baloo 2',cursive;
+  font-size:22px;
+  letter-spacing:3px;
+}
+
+video{
+  width:100%;
+  max-width:420px;
+  border-radius:25px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.1);
+  cursor:pointer;
+}
+
+.info-box,.account-box{
+  background:var(--white);
+  padding:35px;
+  border-radius:25px;
+  max-width:420px;
+  margin:0 auto;
+  box-shadow:0 15px 40px rgba(0,0,0,0.08);
+}
+
+.button{
+  padding:12px 25px;
+  border-radius:25px;
+  background:var(--button);
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  margin-top:15px;
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  max-width:420px;
+  margin:0 auto;
+}
+
+.gallery img{
+  width:100%;
+  border-radius:15px;
+  cursor:pointer;
+}
+
+.lightbox{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+.lightbox img{
+  max-width:90%;
+  border-radius:15px;
+}
+
+/* 꽃잎 */
+.petal{
+  position:fixed;
+  top:-10px;
+  font-size:20px;
+  animation:fall linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(100vh) rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- 봉투 오프닝 -->
+<div id="envelopeWrap">
+  <div class="envelope" id="envelope">
+    <div class="flap"></div>
+  </div>
+  <div class="open-text">Tap to Open 💌</div>
+</div>
+
+<!-- 메인 콘텐츠 -->
+<div id="mainContent" style="display:none;">
+
+<div class="section show">
+  <div class="kitsch">A Beautiful Beginning of Forever 💙</div>
+</div>
+
+<div class="section show">
+  <video id="mainVideo" autoplay muted loop playsinline>
+    <source src="wedding.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="section">
+  <h1>우리 결혼합니다</h1>
+  <div id="countdown"></div>
+</div>
+
+<div class="section">
+  <div class="info-box">
+    2026년 12월 5일 토요일 오후 12시30분<br>
+    강원도 철원 태봉웨딩홀
+    <br>
+    <button class="button" onclick="shareKakao()">카카오톡 공유</button>
+    <div id="qrcode" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="gallery">
+    <img src="images/photo1.jpg" onclick="openLight(this.src)">
+    <img src="images/photo2.jpg" onclick="openLight(this.src)">
+    <img src="images/photo3.jpg" onclick="openLight(this.src)">
+    <img src="images/photo4.jpg" onclick="openLight(this.src)">
+  </div>
+</div>
+
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLight()">
+  <img id="lightImg">
+</div>
+
+<audio id="bgm" loop>
+  <source src="bgm.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// 봉투 열기 + 음악 자동재생
+document.getElementById("envelopeWrap").onclick=function(){
+  document.getElementById("envelope").classList.add("open");
+  setTimeout(()=>{
+    document.getElementById("envelopeWrap").style.display="none";
+    document.getElementById("mainContent").style.display="block";
+    document.getElementById("bgm").play();
+  },1000);
+};
+
+// 꽃잎 생성
+setInterval(()=>{
+  const petal=document.createElement("div");
+  petal.className="petal";
+  petal.innerHTML="🌸";
+  petal.style.left=Math.random()*100+"vw";
+  petal.style.animationDuration=(5+Math.random()*5)+"s";
+  document.body.appendChild(petal);
+  setTimeout(()=>petal.remove(),10000);
+},500);
+
+// 카운트다운
+const weddingDate=new Date("2026-05-16T13:00:00");
+function updateCountdown(){
+  const now=new Date();
+  const diff=weddingDate-now;
+  const days=Math.floor(diff/(1000*60*60*24));
+  document.getElementById("countdown").innerHTML="D-Day "+days+"일";
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+// 라이트박스
+function openLight(src){
+  document.getElementById("lightbox").style.display="flex";
+  document.getElementById("lightImg").src=src;
+}
+function closeLight(){
+  document.getElementById("lightbox").style.display="none";
+}
+
+// 카카오 공유
+Kakao.init("여기에_자바스크립트키_입력");
+function shareKakao(){
+  Kakao.Link.sendDefault({
+    objectType:"feed",
+    content:{
+      title:"우리 결혼합니다 💙",
+      description:"소중한 날 함께해주세요.",
+      imageUrl:"https://jjuuugyuuu1205.github.io/wedding/images/photo1.jpg",
+      link:{ mobileWebUrl:"https://jjuuugyuuu1205.github.io/wedding/" }
+    }
+  });
+}
+
+// QR 생성
+new QRCode(document.getElementById("qrcode"),{
+  text:"https://jjuuugyuuu1205.github.io/wedding/",
+  width:120,
+  height:120
+});
+
+// 스크롤 애니메이션
+const sections=document.querySelectorAll(".section");
+window.addEventListener("scroll",()=>{
+  sections.forEach(sec=>{
+    if(sec.getBoundingClientRect().top<window.innerHeight-100){
+      sec.classList.add("show");
+    }
+  });
+});
+</script>
+
+</body>
+</html>
