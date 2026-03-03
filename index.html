@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청첩장</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background: #000; 
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container { max-width: 390px; margin: 0 auto; position: relative; }
+        
+        /* Hero */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+        .cta-btn {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .cta-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Content */
+        .content { padding: 2rem 1.5rem; }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .wedding-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        
+        .date-display {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #fff;
+            margin: 1rem 0;
+        }
+        
+        .venue {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        /* Map buttons */
+        .map-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .map-btn {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 16px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .map-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        
+        /* Accounts */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .account-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .account-bank { font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.5rem; }
+        .account-number { 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            font-family: 'SF Mono', monospace;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .copy-btn {
+            background: rgba(59,130,246,0.8);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover { background: #3b82f6; }
+        
+        /* DDAY */
+        .dday-card {
+            background: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(147,51,234,0.2) 100%);
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+        .dday-label { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem; }
+        .dday-count {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Gallery */
+        .gallery-container {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .gallery::-webkit-scrollbar { display: none; }
+        .gallery-item {
+            flex: 0 0 280px;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            scroll-snap-align: start;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .gallery-item:hover { transform: scale(0.98); }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal img { max-width: 95%; max-height: 95%; border-radius: 12px; }
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-nav.prev { left: 2rem; }
+        .modal-nav.next { right: 2rem; }
+        
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card { animation: slideUp 0.6s ease forwards; }
+        
+        @media (max-width: 400px) {
+            .container { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>We Are<br><span style="font-weight: 300;">Getting Married</span></h1>
+            <p class="subtitle">A new beginning together</p>
+            <button class="cta-btn" onclick="startExperience()">
+                <i class="fas fa-play"></i> View Invitation
+            </button>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Wedding Info -->
+            <section class="card" id="weddingInfo" style="display: none;">
+                <div class="wedding-title">December 5, 2026</div>
+                <div class="date-display">Sunday • 12:00 PM</div>
+                <div class="venue">
+                    Grand Hotel Grand Hall<br>
+                    Teheran-ro 123, Gangnam-gu<br>
+                    Seoul, South Korea
+                </div>
+            </section>
+
+            <!-- Maps -->
+            <section class="card" id="maps" style="display: none;">
+                <div style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem;">
+                    <i class="fas fa-map-marker-alt"></i> Directions
+                </div>
+                <div class="map-grid">
+                    <a href="#" class="map-btn" target="_blank">
+                        <i class="fab fa-neuter"></i> Naver
+                    </a>
+                    <a href="#" class="map-btn" target="_blank">
+                        <i class="fab fa-kakao"></i> Kakao
+                    </a>
+                    <a href="#" class="map-btn" target="_blank">
+                        <i class="fas fa-route"></i> T-Map
+                    </a>
+                    <a href="#" class="map-btn" target="_blank">
+                        <i class="fas fa-globe"></i> Apple
+                    </a>
+                </div>
+            </section>
+
+            <!-- Accounts -->
+            <section class="card" id="accounts" style="display: none;">
+                <div style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem;">
+                    Bank Details
+                </div>
+                <div class="accounts-grid">
+                    <div class="account-card">
+                        <div class="account-bank">NH Bank</div>
+                        <div class="account-number">123-456-789012</div>
+                        <button class="copy-btn" onclick="copyAccount('NH 123-456-789012')">Copy</button>
+                    </div>
+                    <div class="account-card">
+                        <div class="account-bank">KB Bank</div>
+                        <div class="account-number">987-654-321098</div>
+                        <button class="copy-btn" onclick="copyAccount('KB 987-654-321098')">Copy</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- D-Day -->
+            <section class="card dday-card" id="dday" style="display: none;">
+                <div class="dday-label">Until Our Wedding</div>
+                <div id="ddayCount" class="dday-count">Calculating...</div>
+            </section>
+
+            <!-- Gallery -->
+            <section class="card" id="gallery" style="display: none;">
+                <div style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem;">
+                    Moments
+                </div>
+                <div class="gallery-container">
+                    <div class="gallery-item" onclick="openGallery(0)">
+                        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=500&fit=crop" loading="lazy">
+                    </div>
+                    <div class="gallery-item" onclick="openGallery(1)">
+                        <img src="https://images.unsplash.com/photo-1560815738-e3dd94f301f4?w=400&h=500&fit=crop" loading="lazy">
+                    </div>
+                    <div class="gallery-item" onclick="openGallery(2)">
+                        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=500&fit=crop" loading="lazy">
+                    </div>
+                    <div class="gallery-item" onclick="openGallery(3)">
+                        <img src="https://images.unsplash.com/photo-1575464993135-619f94e35919?w=400&h=500&fit=crop" loading="lazy">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div id="galleryModal" class="modal" onclick="closeGallery()">
+        <button class="modal-nav prev" onclick="changeGallery(-1)">❮</button>
+        <img id="galleryImg" src="" alt="Photo">
+        <button class="modal-nav next" onclick="changeGallery(1)">❯</button>
+    </div>
+
+    <script>
+        let galleryIndex = 0;
+        const galleryImages = [
+            'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=1000&fit=crop',
+            'https://images.unsplash.com/photo-1560815738-e3dd94f301f4?w=800&h=1000&fit=crop',
+            'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=1000&fit=crop',
+            'https://images.unsplash.com/photo-1575464993135-619f94e35919?w=800&h=1000&fit=crop'
+        ];
+
+        // Music
+        const music = document.getElementById('bgMusic');
+        music.volume = 0.1;
+        music.play().catch(() => {});
+
+        // Start experience
+        function startExperience() {
+            document.querySelector('.hero').style.transform = 'translateY(-100vh)';
+            document.querySelector('.hero').style.transition = 'transform 1s ease';
+            setTimeout(() => {
+                document.querySelector('.hero').style.display = 'none';
+                showSections();
+            }, 1000);
+        }
+
+        function showSections() {
+            const sections = ['weddingInfo', 'maps', 'accounts', 'dday', 'gallery'];
+            sections.forEach((id, index) => {
+                setTimeout(() => {
+                    document.getElementById(id).style.display = 'block';
+                }, index * 150);
+            });
+        }
+
+        // D-Day
+        function updateDday() {
+            const wedding = new Date('2026-12-05T12:00:00+09:00');
+            const now = new Date();
+            const diff = wedding - now;
+            
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById('ddayCount').textContent = 
+                    `${days}d ${hours}h ${mins}m ${secs}s`;
+            }
+        }
+        setInterval(updateDday, 1000);
+        updateDday();
+
+        // Copy account
+        function copyAccount(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const original = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = original;
+                    btn.style.background = '';
+                }, 1500);
+            });
+        }
+
+        // Gallery
+        function openGallery(index) {
+            galleryIndex = index;
+            document.getElementById('galleryImg').src = galleryImages[index];
+            document.getElementById('galleryModal').style.display = 'flex';
+        }
+        function closeGallery() {
+            document.getElementById('galleryModal').style.display = 'none';
+        }
+        function changeGallery(direction) {
+            galleryIndex = (galleryIndex + direction + galleryImages.length) % galleryImages.length;
+            document.getElementById('galleryImg').src = galleryImages[galleryIndex];
+        }
+
+        // Prevent zoom on iOS
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
